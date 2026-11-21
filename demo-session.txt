@@ -1,0 +1,55 @@
+Live demo against the running service, started with: COOKIE_SECURE=false npm start
+(curl talks plain HTTP, so the Secure flag and the __Host- cookie prefix are switched off for this
+demo only. With the default settings the cookie is "__Host-sid=...; Path=/; HttpOnly; SameSite=Strict;
+Max-Age=900; Secure", which is checked by the automated tests.)
+Passwords below are fake demo values.
+
+### 1. Sign up with a weak password -> 400, specific rules (safe to reveal)
+HTTP/1.1 400 Bad Request
+{"error":"Invalid input","details":["Password is too common."]}
+### 2. Sign up with a strong password -> 201
+HTTP/1.1 201 Created
+{"message":"Account created"}
+### 3. Login -> 200 and a hardened cookie
+HTTP/1.1 200 OK
+Cache-Control: no-store
+X-Content-Type-Options: nosniff
+X-Frame-Options: DENY
+Content-Security-Policy: default-src 'none'; frame-ancestors 'none'
+Set-Cookie: sid=4Bgwf4aKJMTKQuhSrSur4RApwBbQpK8YSYHzusmTLno; Path=/; HttpOnly; SameSite=Strict; Max-Age=900
+{"message":"Logged in"}
+
+### 4. Protected route with the session cookie -> 200
+HTTP/1.1 200 OK
+{"email":"demo@example.com"}
+### 5. Protected route with no cookie -> 401
+HTTP/1.1 401 Unauthorized
+{"error":"Authentication required"}
+### 6. Wrong password vs unknown email -> identical generic 401
+HTTP/1.1 401 Unauthorized
+{"error":"Invalid email or password"}
+(same request again, but with an email that is NOT registered:)
+HTTP/1.1 401 Unauthorized
+{"error":"Invalid email or password"}
+### 7. Five wrong passwords in a row (one in step 6 plus four here) -> the next attempt is blocked
+###    with 429 + Retry-After, even though it uses the CORRECT password
+attempt 401
+attempt 401
+attempt 401
+attempt 401
+HTTP/1.1 429 Too Many Requests
+Retry-After: 899
+{"error":"Too many failed attempts. Try again later."}
+
+### 8. Cross-site request is refused -> 403
+HTTP/1.1 403 Forbidden
+{"error":"Forbidden"}
+### 9. Logout, then replay the old cookie -> 401
+HTTP/1.1 200 OK
+Set-Cookie: sid=; Path=/; HttpOnly; SameSite=Strict; Max-Age=0
+{"message":"Logged out"}
+HTTP/1.1 401 Unauthorized
+{"error":"Authentication required"}
+### 10. Unknown route -> generic 404
+HTTP/1.1 404 Not Found
+{"error":"Not found"}

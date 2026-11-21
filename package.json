@@ -1,0 +1,16 @@
+{
+  "name": "secure-auth-lab",
+  "version": "1.0.0",
+  "description": "Small local authentication service with safe password storage, validation, secure sessions, rate limiting and generic errors. Zero runtime dependencies.",
+  "private": true,
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "start:dev": "COOKIE_SECURE=false node server.js",
+    "test": "node --test --test-reporter=spec"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "license": "MIT"
+}

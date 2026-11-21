@@ -1,0 +1,60 @@
+# Output of: npm test   (Node v22.23.5, 2026-11-21)
+
+
+> secure-auth-lab@1.0.0 test
+> node --test --test-reporter=spec
+
+▶ 1. Password hashing
+  ✔ uses salted scrypt and never contains the plaintext password (551.30033ms)
+  ✔ accepts the right password and rejects wrong ones (860.453278ms)
+  ✔ treats canonically equivalent Unicode passwords as the same password (400.527264ms)
+  ✔ fails closed on malformed or tampered stored hashes (0.537832ms)
+  ✔ stores only the hash in the account record (18.751269ms)
+  ✔ uses the production cost parameters by default (254.456908ms)
+✔ 1. Password hashing (2087.390046ms)
+▶ 3. Rate limits
+  ✔ blocks the 6th login attempt after 5 failures, even with the right password, then recovers (45.70588ms)
+  ✔ resets the failure counter after a successful login (39.612915ms)
+  ✔ does not let one address lock the real owner out from another address (24.155591ms)
+  ✔ blocks an address that sprays guesses across many accounts (64.335613ms)
+  ✔ limits sign-ups per address per hour (46.460812ms)
+  ✔ applies an overall request budget per address (10.637798ms)
+✔ 3. Rate limits (232.102043ms)
+▶ 3. Generic authentication errors
+  ✔ gives the same response for an unknown email and a wrong password (15.221722ms)
+  ✔ treats very long or odd login passwords as ordinary failures (16.721595ms)
+  ✔ does not reveal internals when something unexpected breaks (2.391547ms)
+  ✔ uses plain generic messages for unknown routes and wrong methods (3.469748ms)
+  ✔ sends defensive security headers on every response (3.236591ms)
+  ✔ never writes passwords, session tokens or raw emails to the logs (14.729899ms)
+✔ 3. Generic authentication errors (56.311994ms)
+▶ 2. Secure cookies, logout and session expiry
+  ✔ sets a hardened session cookie on login (30.673271ms)
+  ✔ can drop Secure and the __Host- prefix only when explicitly configured for local HTTP (15.486706ms)
+  ✔ does not keep the raw session token on the server (10.801899ms)
+  ✔ protects /me: no cookie, garbage cookie and unknown token all get 401 (17.072664ms)
+  ✔ serves /me for a valid session (10.353328ms)
+  ✔ logout destroys the server-side session and clears the cookie (10.227421ms)
+  ✔ logout without a session is harmless (1.240658ms)
+  ✔ expires idle sessions but keeps active ones alive (10.581463ms)
+  ✔ enforces an absolute lifetime even for constantly active sessions (48.703616ms)
+  ✔ issues a fresh session id on every login and retires the old one (16.509264ms)
+  ✔ refuses cross-site state-changing requests (CSRF defence in depth) (10.898633ms)
+✔ 2. Secure cookies, logout and session expiry (184.143533ms)
+▶ 1. Server-side input validation
+  ✔ rejects weak passwords with 400 and does not create the account (24.65876ms)
+  ✔ rejects invalid email addresses (9.723976ms)
+  ✔ rejects wrong data types (type confusion / injection-shaped values) (6.845927ms)
+  ✔ rejects malformed JSON, non-object JSON and wrong content types (5.949934ms)
+  ✔ rejects oversized request bodies (declared and streamed) (3.422563ms)
+  ✔ normalizes email addresses and blocks case-variant duplicates (12.375218ms)
+  ✔ ignores prototype-pollution style keys in the body (4.345879ms)
+✔ 1. Server-side input validation (68.442688ms)
+ℹ tests 36
+ℹ suites 5
+ℹ pass 36
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 2837.709262
